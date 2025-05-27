@@ -51,7 +51,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         with:
-          task-definition: task-definition: arn:aws:ecs:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:task-definition/spring-boot-app-task:1
+          task-definition: spring-boot-app-task
           service: spring-boot-app-service
           cluster: spring-boot-app-cluster
           wait-for-service-stability: true
