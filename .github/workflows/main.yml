@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17' # Use the Java version your Spring Boot app requires
+          java-version: '17'
 
       # Step 3: Build the Spring Boot application
       - name: Build with Maven
@@ -44,15 +44,14 @@ jobs:
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/spring-boot-app-repo:latest
 
-      # Step 7: Deploy to ECS
-      - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      # Step 7: Update ECS Service
+      - name: Update ECS Service
+        run: |
+          aws ecs update-service \
+            --cluster spring-boot-app-cluster \
+            --service spring-boot-app-service \
+            --force-new-deployment \
+            --region ${{ secrets.AWS_REGION }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        with:
-          task-definition: arn:aws:ecs:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:task-definition/spring-boot-app-task:1
-          service: spring-boot-app-service
-          cluster: spring-boot-app-cluster
-          wait-for-service-stability: true
